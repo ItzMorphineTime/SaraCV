@@ -614,7 +614,7 @@ function(r){"object"==typeof e&&void 0!==t?t.exports=r():"function"==typeof defi
       ],
       stats: [
         {value:(data.publications || []).length,label:"Publications"},
-        {value:(data.publications || []).filter(item => item["Sara Author Role"] === "First author").length,label:"First-author papers"},
+        {value:(data.publications || []).filter(item => item["Sara Author Role"] === "First author").length,label:"Papers"},
         {value:(data.memberships || []).length,label:"Professional societies"},
         {value:(data.committees || []).filter(item => yes(item.Current)).length,label:"Current service roles"}
       ],
