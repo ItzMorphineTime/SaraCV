@@ -1,33 +1,48 @@
-# Sara Tarek Ahmed — CV Publishing Workflow
+# Sara Tarek Ahmed — Digital CV
 
-This repository contains a structured, maintainable CV publishing system built around a single source of truth.
+A structured CV publishing workflow that uses an Excel workbook as the editable source of truth, exports the data to JSON, renders a responsive web CV, and generates an ATS-friendly Word document.
 
-The workflow begins with an editable Excel master dataset, exports that data to JSON, renders a responsive web CV through GitHub Pages, and supports generation of an ATS-friendly Word document.
+<p align="center">
+  <a href="https://itzmorphinetime.github.io/SaraCV/">
+    <strong>View the live CV website</strong>
+  </a>
+</p>
 
-## Repository contents
+<p align="center">
+  <a href="https://itzmorphinetime.github.io/SaraCV/">
+    <img src="Sara_Tarek_Ahmed_CV_ATS_Button_Preview.png" alt="Preview of Sara Tarek Ahmed's digital CV and ATS DOCX export interface" width="900">
+  </a>
+</p>
+
+## Live website
+
+The published CV is available through GitHub Pages:
+
+**[https://itzmorphinetime.github.io/SaraCV/](https://itzmorphinetime.github.io/SaraCV/)**
+
+The webpage loads its content from the repository JSON file at runtime, so CV content can be updated without rewriting the HTML.
+
+## Repository files
 
 ```text
 .
-├── Sara_Tarek_Ahmed_CV_Master_Dataset_with_JSON_Exporter.xlsx
+├── Index.html
 ├── SaraExportedDataCV.json
+├── Sara_Tarek_Ahmed_CV_Master_Dataset_with_JSON_Exporter.xlsx
 ├── Sara_Tarek_Ahmed_ATS_CV.docx
 ├── Sara_Tarek_Ahmed_CV_ATS_Button_Preview.png
-├── Index.html
 └── README.md
 ```
 
-### File roles
-
 | File | Purpose |
 |---|---|
-| `Sara_Tarek_Ahmed_CV_Master_Dataset_with_JSON_Exporter.xlsx` | Human-editable source of truth for all CV data, privacy settings, output selections, verification statuses, and editorial notes. |
-| `SaraExportedDataCV.json` | Machine-readable dataset generated from the Excel workbook and consumed by the website. |
-| `Index.html` | Responsive CV webpage. It loads `SaraExportedDataCV.json` at runtime and dynamically renders the content. |
-| `Sara_Tarek_Ahmed_ATS_CV.docx` | Current ATS-friendly Word CV generated from the structured data. |
-| `Sara_Tarek_Ahmed_CV_ATS_Button_Preview.png` | Preview image showing the webpage and ATS DOCX export control. |
-| `README.md` | Project documentation and maintenance workflow. |
+| `Sara_Tarek_Ahmed_CV_Master_Dataset_with_JSON_Exporter.xlsx` | Human-editable master dataset containing CV records, verification states, privacy rules, and output settings. |
+| `SaraExportedDataCV.json` | Machine-readable data exported from the workbook and consumed by the website. |
+| `Index.html` | Responsive GitHub Pages CV that dynamically renders the JSON data. |
+| `Sara_Tarek_Ahmed_ATS_CV.docx` | Current ATS-friendly Word CV generated from the structured dataset. |
+| `Sara_Tarek_Ahmed_CV_ATS_Button_Preview.png` | Repository preview image showing the webpage and ATS DOCX export interface. |
 
-## Architecture
+## Workflow overview
 
 ```text
 Excel master dataset
@@ -37,17 +52,17 @@ Excel master dataset
 SaraExportedDataCV.json
         │
         ├──────────────► Index.html
-        │                 Responsive GitHub Pages CV
+        │                 GitHub Pages CV
         │
         └──────────────► ATS DOCX exporter
-                          Professional one-column Word CV
+                          Professional Word CV
 ```
 
-The Excel workbook is the authoritative source. The JSON, webpage, and Word document are generated outputs and should not be edited independently unless the change is intentionally temporary.
+The Excel workbook is the authoritative source. The JSON, website, and Word document are generated outputs.
 
-## Workflow
+## Updating the CV
 
-### 1. Update the master dataset
+### 1. Edit the master workbook
 
 Open:
 
@@ -55,142 +70,139 @@ Open:
 Sara_Tarek_Ahmed_CV_Master_Dataset_with_JSON_Exporter.xlsx
 ```
 
-Edit the relevant structured table rather than manually changing the JSON, HTML, or DOCX.
+Update the relevant structured sheet rather than editing the generated JSON, HTML, or DOCX directly.
 
-The workbook separates CV content into sections such as:
+The workbook stores:
 
-- profile and contact details;
+- profile and contact information;
 - education;
 - employment;
 - publications;
 - intellectual property;
-- committee service;
+- committee and academic-service roles;
 - professional memberships;
 - community projects;
 - professional development;
 - unresolved issues and editorial decisions.
 
-Each record includes stable identifiers, source references, verification status, privacy controls, and output-specific inclusion flags.
+Each record includes:
 
-### 2. Review privacy and output settings
+- a stable record ID;
+- raw and cleaned values;
+- verification status;
+- source-page references;
+- privacy settings;
+- web, employer-CV, and academic-CV inclusion flags.
 
-Before publishing, confirm the following fields for each record:
+### 2. Review privacy and inclusion settings
 
-- `Include Web`
-- `Include Employer CV`
-- `Include Academic CV`
-- `Privacy`
-- `Status`
+Before exporting, confirm the following fields:
 
-Public web content should only contain information approved for public display.
+```text
+Privacy
+Include Web
+Include Employer CV
+Include Academic CV
+Status
+```
 
-Private addresses, private contact details, unresolved claims, and incomplete records should remain excluded until reviewed.
+Only approved public information should be enabled for the website.
+
+Private addresses, unverified claims, incomplete records, and employer-only details should remain excluded from the public output.
 
 ### 3. Resolve outstanding issues
 
-Use the workbook's **Issues & Decisions** sheet to document ambiguous dates, wording corrections, missing information, and final decisions.
+Use the workbook's **Issues & Decisions** sheet to track ambiguous dates, missing information, wording corrections, and approval decisions.
 
-When an issue is resolved:
+When an item is resolved:
 
-1. update the relevant source record;
-2. enter the final decision;
+1. update the linked record;
+2. record the final decision;
 3. change the issue status to `Resolved`;
 4. change the related record status to `Verified`.
 
-This maintains an auditable history and prevents silent corrections.
+This preserves an auditable maintenance history.
 
-### 4. Export the JSON dataset
+### 4. Export the JSON
 
-Use the workbook's **JSON Export** sheet and the configured Microsoft Office Script.
+Use the workbook's **JSON Export** sheet and Office Script.
 
 The exporter:
 
 - reads the structured Excel tables;
-- applies the configured section mappings;
-- preserves the expected JSON schema;
-- converts configured empty fields to `null`;
-- writes the generated JSON to the workbook output sheet;
+- applies the configured mappings;
+- preserves the expected schema;
+- writes the generated JSON to the output sheet;
 - returns the complete JSON string.
 
-Save or replace the exported file as:
+Save the exported file as:
 
 ```text
 SaraExportedDataCV.json
 ```
 
-Keep the filename unchanged because `Index.html` loads it directly.
+The filename must remain unchanged because the webpage loads it directly.
 
-### 5. Validate the webpage locally
+### 5. Test the website locally
 
-The webpage requests the JSON file at runtime:
+`Index.html` and `SaraExportedDataCV.json` must remain in the same directory.
 
-```text
-Index.html
-SaraExportedDataCV.json
-```
-
-Both files must remain in the same directory.
-
-Because browsers can restrict local `fetch()` requests from `file://` pages, test the repository through a local web server.
-
-Using Python:
+Run a local server from the repository root:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then open:
+Open:
 
 ```text
 http://localhost:8000/Index.html
 ```
 
-Check:
+Review:
 
-- name, title, location, and contact information;
+- profile and contact details;
 - section ordering;
 - publication links;
-- inclusion and privacy filtering;
+- privacy filtering;
 - desktop and mobile layouts;
 - print styling;
-- ATS DOCX generation;
+- ATS DOCX export;
 - browser console errors.
 
-For automatic loading at the root GitHub Pages URL, using lowercase `index.html` is recommended. If the file remains `Index.html`, link to that exact case-sensitive path.
-
-### 6. Generate the ATS DOCX
+### 6. Generate the ATS CV
 
 Open the webpage and select **Download ATS DOCX**.
 
-The generated document is built directly from the active JSON dataset rather than converted from the visual webpage.
+The DOCX is generated directly from the active JSON dataset rather than converted from the visual HTML layout.
 
-This approach produces a cleaner ATS-oriented document with:
+This produces a document with:
 
-- one-column reading order;
-- standard headings;
-- ordinary paragraphs and bullet lists;
-- no sidebars, text boxes, icons, or decorative tables;
+- a single-column reading order;
+- conventional section headings;
+- standard paragraphs and bullet lists;
+- no text boxes, sidebars, or decorative tables;
 - selectable text;
-- conventional fonts;
 - visible DOI text and hyperlinks;
 - employer-specific inclusion settings;
-- contact information in the main document body.
+- contact details in the main document body.
 
-After generation:
+After generating the document:
 
-1. open the DOCX in Microsoft Word;
-2. review page breaks, dates, contact details, and section selection;
-3. run spelling and grammar checks;
-4. confirm that hyperlinks work;
-5. save the approved file as:
+1. open it in Microsoft Word;
+2. review page breaks and section selection;
+3. confirm dates and contact details;
+4. run spelling and grammar checks;
+5. test hyperlinks;
+6. save the approved version as:
 
 ```text
 Sara_Tarek_Ahmed_ATS_CV.docx
 ```
 
-### 7. Commit the updated outputs
+### 7. Commit and publish
 
-After reviewing the website and DOCX, commit the changed files:
+Commit the updated source and generated files:
 
 ```bash
 git add   Sara_Tarek_Ahmed_CV_Master_Dataset_with_JSON_Exporter.xlsx   SaraExportedDataCV.json   Sara_Tarek_Ahmed_ATS_CV.docx   Index.html   README.md
@@ -199,44 +211,25 @@ git commit -m "Update CV data and generated outputs"
 git push
 ```
 
-The preview image only needs to be replaced when the interface or export controls change.
-
-## GitHub Pages deployment
-
-In the GitHub repository:
-
-1. open **Settings**;
-2. select **Pages**;
-3. choose **Deploy from a branch**;
-4. select the publishing branch, usually `main`;
-5. select the repository root;
-6. save the configuration.
-
-The published site must contain `Index.html` and `SaraExportedDataCV.json` in the same served directory.
-
-After deployment, verify that:
-
-- the JSON request returns HTTP 200;
-- the page renders without a data-loading error;
-- DOI and email links open correctly;
-- the DOCX export works in a modern browser;
-- no private data appears in the public page source or generated document.
+GitHub Pages will publish the updated website after the deployment completes.
 
 ## Data maintenance rules
 
-### Treat the workbook as the source of truth
+### Use the workbook as the source of truth
 
-Do not make permanent content corrections only in:
+Permanent content changes should originate in the Excel workbook.
+
+Avoid making standalone content edits only in:
 
 - `SaraExportedDataCV.json`;
 - `Index.html`;
 - `Sara_Tarek_Ahmed_ATS_CV.docx`.
 
-Those changes will be overwritten the next time outputs are regenerated.
+Those changes may be overwritten during the next export cycle.
 
 ### Preserve record IDs
 
-Existing IDs should remain stable even when records are reordered or temporarily excluded.
+Do not renumber existing records, even if their display order changes.
 
 Examples:
 
@@ -248,20 +241,20 @@ COM002
 PD046
 ```
 
-Use the next sequential ID when adding a new record.
+Assign the next sequential ID when adding a new record.
 
 ### Preserve raw and cleaned values
 
-Where the workbook contains both raw and cleaned values:
+When both fields exist:
 
-- retain the original source wording;
-- place corrected or presentation-ready wording in the clean field;
-- record uncertain transformations in `Notes`;
-- keep the status as `Needs review` until approved.
+- keep the original source wording in the raw field;
+- place presentation-ready wording in the cleaned field;
+- document uncertain transformations in `Notes`;
+- retain `Needs review` until the value is approved.
 
 ### Use ISO dates
 
-Use the most precise supported ISO representation:
+Use the most precise available ISO format:
 
 ```text
 YYYY
@@ -277,139 +270,150 @@ Examples:
 2026-03-13
 ```
 
-Retain the original date in the corresponding raw-date field.
+Keep the original source date in the corresponding raw field.
 
-### Do not publish empty placeholders
+## Website architecture
 
-Profile fields such as summary, expertise, languages, and academic links should only render when they contain approved values.
+The webpage separates content from presentation:
 
-The website and document generator should omit empty or excluded fields rather than showing blank headings.
+- `SaraExportedDataCV.json` stores the CV data;
+- Handlebars templates define the rendered markup;
+- CSS controls visual presentation;
+- JavaScript filters, sorts, formats, and renders the dataset;
+- the DOCX exporter builds the ATS document from the same active JSON data.
 
-## Updating the website design
-
-The website separates data from presentation:
-
-- the JSON file contains CV content;
-- Handlebars templates define rendered markup;
-- CSS controls the visual design;
-- JavaScript prepares, filters, sorts, and formats the data.
-
-Content changes should normally require only:
+Routine content updates usually require only:
 
 1. editing the workbook;
 2. exporting a new JSON file;
-3. replacing `SaraExportedDataCV.json`.
+3. replacing `SaraExportedDataCV.json`;
+4. regenerating the DOCX;
+5. committing the updated files.
 
-Changes to `Index.html` are only required when modifying layout, styling, rendering logic, or export behaviour.
+`Index.html` only needs modification when changing the layout, styling, rendering logic, or export behaviour.
+
+## GitHub Pages deployment
+
+The live site is published at:
+
+**[https://itzmorphinetime.github.io/SaraCV/](https://itzmorphinetime.github.io/SaraCV/)**
+
+GitHub Pages should be configured to deploy from the repository's publishing branch and root directory.
+
+After every update, verify that:
+
+- the live site loads successfully;
+- the JSON request returns successfully;
+- the page renders without a data-loading error;
+- DOI and email links work;
+- the ATS DOCX button downloads a valid Word document;
+- no private information appears in the page or generated document.
 
 ## Troubleshooting
 
-### The page shows a JSON loading error
+### The webpage shows a JSON loading error
 
-Confirm that:
+Check that:
 
-- the filename is exactly `SaraExportedDataCV.json`;
+- the file is named exactly `SaraExportedDataCV.json`;
 - the JSON file is in the same directory as `Index.html`;
-- the JSON is valid;
-- the page is being served over HTTP or HTTPS;
+- the JSON syntax is valid;
 - the filename case matches exactly;
-- GitHub Pages has finished deploying the latest commit.
+- the latest files have been pushed;
+- GitHub Pages has completed deployment.
 
-### The webpage still shows old information
-
-The browser or GitHub Pages CDN may be serving a cached file.
+### The live website shows old information
 
 Try:
 
-- a hard refresh;
-- opening the page in a private window;
+- performing a hard refresh;
+- opening the site in a private browser window;
 - confirming the latest JSON is present in the repository;
-- checking the JSON response directly in browser developer tools.
-
-### The DOCX button does not work
-
-Check:
-
-- the browser console for JavaScript errors;
-- whether the DOCX-generation library loaded successfully;
-- whether the JSON completed loading before export;
-- whether downloads are blocked by the browser;
-- whether the active dataset contains employer-CV records.
+- checking the JSON response in browser developer tools;
+- waiting for the GitHub Pages deployment to finish.
 
 ### A record is missing from the website
 
-In the workbook, verify:
+In the workbook, confirm:
 
 ```text
 Include Web = Yes
 Privacy = Public
 ```
 
-Also confirm that the record contains a usable display value and that the section is enabled in the page's rendering logic.
+Also confirm that the record has a usable display value.
 
 ### A record is missing from the ATS DOCX
 
-Verify:
+Confirm:
 
 ```text
 Include Employer CV = Yes
 ```
 
-Then regenerate the JSON and create a new Word document from the webpage.
+Then export the JSON again and generate a new DOCX from the webpage.
+
+### The DOCX export button does not work
+
+Check:
+
+- the browser console for JavaScript errors;
+- whether the DOCX-generation library loaded;
+- whether the JSON finished loading;
+- whether browser downloads are blocked;
+- whether employer-CV records are enabled.
 
 ## Release checklist
 
-Before publishing a CV update:
+Before publishing an update:
 
 - [ ] Master workbook updated
-- [ ] Ambiguous records reviewed
+- [ ] Outstanding issues reviewed
 - [ ] Privacy settings confirmed
-- [ ] Web inclusion settings confirmed
-- [ ] Employer-CV inclusion settings confirmed
+- [ ] Web inclusion flags confirmed
+- [ ] Employer-CV inclusion flags confirmed
 - [ ] JSON regenerated
-- [ ] JSON validation passed
+- [ ] JSON validated
 - [ ] Website tested locally
-- [ ] GitHub Pages deployment checked
 - [ ] ATS DOCX regenerated
-- [ ] DOCX opened and reviewed in Word
+- [ ] DOCX reviewed in Microsoft Word
 - [ ] Contact details confirmed
 - [ ] Publication links tested
 - [ ] Changes committed and pushed
+- [ ] Live GitHub Pages site checked
 
-## Recommended versioning
+## Versioning
 
-Use clear commit messages:
+Use descriptive commit messages:
 
 ```text
 Update academic appointment
 Add 2026 publication
 Correct professional development dates
-Refresh public CV and ATS document
-Update webpage layout
+Refresh website and ATS CV
+Improve CV layout
 ```
 
-For major approved releases, create Git tags:
+For major approved releases:
 
 ```bash
 git tag -a cv-2026-06 -m "CV release June 2026"
 git push origin cv-2026-06
 ```
 
-This provides a recoverable history of published CV versions.
-
 ## Privacy notice
 
-This repository may contain personal and professional information intended for public distribution.
+This repository contains personal and professional information intended for publication.
 
-Before making the repository public, review:
+Before making changes public, review:
 
-- phone numbers;
+- telephone numbers;
 - email addresses;
 - residential addresses;
 - identification or registration numbers;
-- unpublished research;
 - draft achievements;
-- unresolved or unverified claims;
-- metadata contained in Excel and Word files.
+- unpublished research;
+- unresolved claims;
+- document metadata.
 
-Only publish information that has been explicitly approved for public access.
+Only approved information should be included in the public repository and generated outputs.
