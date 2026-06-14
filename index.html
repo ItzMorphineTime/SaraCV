@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Sara Tarek Ahmed — Assistant Professor of Prosthodontics. Academic CV, research publications, education and professional service, with ATS-friendly Word export.">
+  <meta name="description" content="Sara Tarek Ahmed — Assistant Professor of Prosthodontics. Academic CV, research publications, education and professional service, with ATS-friendly and academic Word exports.">
   <meta name="color-scheme" content="light dark">
   <title>Sara Tarek Ahmed · Assistant Professor of Prosthodontics</title>
   <style>
@@ -329,7 +329,8 @@ footer {
     </nav>
     <div class="header-actions">
       <!-- <button class="icon-button" id="data-button" type="button" title="Load updated JSON" aria-label="Load updated JSON">{{{icon "upload"}}}</button> -->
-      <button class="icon-button" id="docx-button" type="button" title="Download ATS-friendly DOCX" aria-label="Download ATS-friendly DOCX">{{{icon "word"}}}</button>
+      <button class="icon-button" id="docx-button" type="button" title="Download ATS-friendly CV DOCX" aria-label="Download ATS-friendly CV DOCX">{{{icon "word"}}}</button>
+      <button class="icon-button" id="academic-docx-button" type="button" title="Download academic CV DOCX" aria-label="Download academic CV DOCX">{{{icon "academic"}}}</button>
       <button class="icon-button" id="theme-button" type="button" title="Toggle colour theme" aria-label="Toggle colour theme">{{{icon "sun"}}}</button>
       <button class="icon-button" id="print-button" type="button" title="Print or save as PDF" aria-label="Print or save as PDF">{{{icon "print"}}}</button>
     </div>
@@ -348,7 +349,8 @@ footer {
       </div>
       <div class="hero-actions">
         <a class="primary-button" href="#research">View research {{{icon "arrow"}}}</a>
-        <button class="secondary-button" type="button" data-action="docx">Download ATS DOCX</button>
+        <button class="secondary-button" type="button" data-action="docx">Download ATS CV</button>
+        <button class="secondary-button" type="button" data-action="academic-docx">Download Academic CV</button>
         <button class="secondary-button" type="button" data-action="print">Print CV</button>
       </div>
     </div>
@@ -519,6 +521,7 @@ function(r){"object"==typeof e&&void 0!==t?t.exports=r():"function"==typeof defi
     sun: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>',
     upload: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>',
     word: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 13h8M9 17h8"/></svg>',
+    academic: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10l4 4v14H5z"/><path d="M14 3v5h5"/><path d="m8 15 2 2 5-5"/></svg>',
     arrow: '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>',
     external: '<svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
     awardLarge: '<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>'
@@ -876,6 +879,447 @@ function(r){"object"==typeof e&&void 0!==t?t.exports=r():"function"==typeof defi
     });
   }
 
+
+  function buildAcademicDocx(data) {
+    if (!window.docx) throw new Error("The DOCX generator did not load.");
+    const {
+      Document, Paragraph, TextRun, ExternalHyperlink, BorderStyle,
+      Table, TableRow, TableCell, WidthType, VerticalAlign,
+      AlignmentType, TableLayoutType, Header, Footer, PageNumber,
+      ShadingType
+    } = window.docx;
+
+    const FONT = "Arial";
+    const NAVY = "17324D";
+    const TEAL = "0F766E";
+    const DARK = "1F2937";
+    const MUTED = "566573";
+    const LIGHT_TEAL = "E7F4F2";
+    const MID_GRAY = "D8E0E7";
+    const WHITE = "FFFFFF";
+    const NONE_BORDER = { style: BorderStyle.NONE, size: 0, color: WHITE };
+    const TABLE_NONE = { top: NONE_BORDER, bottom: NONE_BORDER, left: NONE_BORDER, right: NONE_BORDER, insideHorizontal: NONE_BORDER, insideVertical: NONE_BORDER };
+
+    const isYes = value => String(value || "").trim().toLowerCase() === "yes";
+    const clean = value => String(value ?? "").replace(/\s+/g, " ").trim();
+    const academicItems = key => (data[key] || []).filter(row => isYes(row?.["Include Academic CV"]) && row?.Status !== "Excluded");
+    const displayOrder = rows => [...rows].sort((a, b) => Number(a["Display Order"] ?? 9999) - Number(b["Display Order"] ?? 9999));
+    const profileValue = label => {
+      const row = (data.profile || []).find(item => item.Label === label && isYes(item["Include Academic CV"]) && item.Status !== "Excluded");
+      return clean(row?.["Value (clean/display)"] || row?.["Value (raw)"] || "");
+    };
+    const splitList = value => clean(value).split(/[,;|]/).map(item => item.trim()).filter(Boolean);
+    const uniqueValues = values => [...new Map(values.map(value => [value.toLowerCase(), value])).values()];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const academicDate = (value, fallback = "") => {
+      const text = clean(value);
+      if (!text) return clean(fallback);
+      if (/^\d{4}$/.test(text)) return text;
+      if (/^\d{4}-\d{2}$/.test(text)) {
+        const [year, month] = text.split("-");
+        return `${monthNames[Number(month) - 1]} ${year}`;
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+        const [year, month, day] = text.split("-");
+        return `${Number(day)} ${monthNames[Number(month) - 1]} ${year}`;
+      }
+      return fallback || text;
+    };
+    const academicRange = (start, end, current, fallbackStart = "", fallbackEnd = "") => {
+      const first = academicDate(start, fallbackStart);
+      const last = current ? "Present" : academicDate(end, fallbackEnd);
+      return first && last ? `${first} - ${last}` : first || last;
+    };
+    const countWord = count => ({0:"zero",1:"one",2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight",9:"nine",10:"ten",11:"eleven",12:"twelve",13:"thirteen",14:"fourteen",15:"fifteen",16:"sixteen",17:"seventeen",18:"eighteen",19:"nineteen",20:"twenty"})[count] || String(count);
+
+    const run = (text, options = {}) => new TextRun({
+      text: String(text ?? ""),
+      font: FONT,
+      size: options.size ?? 18,
+      bold: Boolean(options.bold),
+      italics: Boolean(options.italics),
+      color: options.color || DARK,
+      break: options.break
+    });
+    const paragraph = (children, options = {}) => new Paragraph({
+      children: Array.isArray(children) ? children : [run(children)],
+      alignment: options.alignment,
+      spacing: { before: options.before || 0, after: options.after ?? 40, line: options.line || 254 },
+      keepNext: Boolean(options.keepNext),
+      keepLines: Boolean(options.keepLines),
+      indent: options.indent,
+      border: options.border,
+      pageBreakBefore: Boolean(options.pageBreakBefore)
+    });
+    const sectionHeading = title => paragraph(
+      [run(title.toUpperCase(), { size: 22, bold: true, color: NAVY })],
+      { before: 180, after: 80, line: 240, keepNext: true, border: { bottom: { color: TEAL, style: BorderStyle.SINGLE, size: 8, space: 3 } } }
+    );
+    const subheading = title => paragraph(
+      [run(title, { size: 20, bold: true, color: NAVY })],
+      { before: 85, after: 28, line: 230, keepNext: true }
+    );
+    const bullet = (text, size = 18.4) => paragraph(
+      [run("• ", { size, bold: true, color: TEAL }), run(text, { size })],
+      { after: 15, line: 235, keepLines: true, indent: { left: 330, hanging: 200 } }
+    );
+    const twoColEntry = (dateText, title, organization = "", details = [], accent = false) => {
+      const detailRows = Array.isArray(details) ? details.filter(Boolean) : [details].filter(Boolean);
+      const rightChildren = [];
+      const topRuns = [run(title, { size: 18.8, bold: true, color: DARK })];
+      if (organization) topRuns.push(run(organization, { size: 17.8, italics: true, color: MUTED, break: 1 }));
+      rightChildren.push(paragraph(topRuns, { after: 0, line: 220, keepNext: detailRows.length > 0 }));
+      detailRows.forEach((detail, index) => rightChildren.push(paragraph(
+        [run(detail, { size: 17.6, color: DARK })],
+        { after: index === detailRows.length - 1 ? 6 : 0, line: 220, keepNext: index < detailRows.length - 1 }
+      )));
+      return new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        columnWidths: [1770, 8120],
+        layout: TableLayoutType.FIXED,
+        borders: TABLE_NONE,
+        rows: [new TableRow({
+          cantSplit: true,
+          children: [
+            new TableCell({
+              width: { size: 1770, type: WidthType.DXA },
+              verticalAlign: VerticalAlign.TOP,
+              borders: TABLE_NONE,
+              margins: { top: 0, bottom: 0, left: 0, right: 80 },
+              children: [paragraph([run(dateText, { size: 17.2, bold: true, color: accent ? TEAL : MUTED })], { after: 0, line: 220, keepLines: true })]
+            }),
+            new TableCell({
+              width: { size: 8120, type: WidthType.DXA },
+              verticalAlign: VerticalAlign.TOP,
+              borders: TABLE_NONE,
+              margins: { top: 0, bottom: 0, left: 0, right: 0 },
+              children: rightChildren
+            })
+          ]
+        })]
+      });
+    };
+    const authorRuns = authors => {
+      const variants = ["Tarek Ahmed, S.", "Ahmed, S. T."];
+      const positions = [];
+      variants.forEach(variant => {
+        let from = 0;
+        while (from < authors.length) {
+          const index = authors.indexOf(variant, from);
+          if (index < 0) break;
+          positions.push({ start: index, end: index + variant.length });
+          from = index + variant.length;
+        }
+      });
+      positions.sort((a, b) => a.start - b.start);
+      const output = [];
+      let cursor = 0;
+      positions.forEach(position => {
+        if (position.start < cursor) return;
+        if (position.start > cursor) output.push(run(authors.slice(cursor, position.start), { size: 17.3 }));
+        output.push(run(authors.slice(position.start, position.end), { size: 17.3, bold: true, color: NAVY }));
+        cursor = position.end;
+      });
+      if (cursor < authors.length) output.push(run(authors.slice(cursor), { size: 17.3 }));
+      return output;
+    };
+    const publication = (index, pub) => {
+      const children = [run(`${index}. `, { size: 17.3, bold: true, color: TEAL }), ...authorRuns(clean(pub["Authors (source order)"]))];
+      children.push(run(` (${pub.Year}). `, { size: 17.3 }));
+      children.push(run(`${clean(pub.Title)}. `, { size: 17.3 }));
+      children.push(run(clean(pub.Journal), { size: 17.3, italics: true }));
+      let tail = "";
+      if (pub.Volume) tail += `, ${pub.Volume}`;
+      if (pub.Issue) tail += `(${pub.Issue})`;
+      if (pub["Pages / Article"]) tail += `, ${pub["Pages / Article"]}`;
+      children.push(run(`${tail}. `, { size: 17.3 }));
+      if (pub.DOI && pub["DOI URL"]) {
+        children.push(run("DOI: ", { size: 17, color: MUTED }));
+        children.push(new ExternalHyperlink({
+          link: pub["DOI URL"],
+          children: [run(pub.DOI, { size: 17, color: TEAL })]
+        }));
+      }
+      return paragraph(children, { after: 90, line: 240, keepLines: true, indent: { left: 430, hanging: 430 } });
+    };
+
+    const name = profileValue("Full name") || "Sara Tarek Ahmed";
+    const headline = profileValue("Professional headline") || "Assistant Professor of Prosthodontics";
+    const location = profileValue("Location for display") || "Riyadh, Saudi Arabia";
+    const email = profileValue("Personal email");
+    const phone = profileValue("International telephone / mobile") || profileValue("Telephone / mobile");
+    const publications = academicItems("publications");
+    const publicationCount = publications.length;
+    const currentRole = displayOrder(academicItems("employment"))[0];
+    const bds = academicItems("education").find(item => item["Education ID"] === "EDU001");
+    const masters = academicItems("education").find(item => item["Education ID"] === "EDU002");
+    const lastUpdated = academicDate(data.metadata?.last_updated || "", data.metadata?.last_updated || "");
+
+    const header = new Header({
+      children: [paragraph(
+        [run(`${name.toUpperCase()}  |  ACADEMIC CV`, { size: 15, bold: true, color: MUTED })],
+        { alignment: AlignmentType.RIGHT, after: 0, line: 210, border: { bottom: { color: MID_GRAY, style: BorderStyle.SINGLE, size: 4, space: 2 } } }
+      )]
+    });
+    const footer = new Footer({
+      children: [new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [new TextRun({
+          font: FONT,
+          size: 14.6,
+          color: MUTED,
+          children: ["Saudi Board of Prosthodontics Promotion Examination  |  Page ", PageNumber.CURRENT, " of ", PageNumber.TOTAL_PAGES]
+        })],
+        spacing: { after: 0, line: 200 }
+      })]
+    });
+
+    const children = [];
+    children.push(paragraph([run(name.toUpperCase(), { size: 44, bold: true, color: NAVY })], { alignment: AlignmentType.CENTER, after: 15, line: 440, keepNext: true }));
+    children.push(paragraph([run(headline, { size: 24.4, bold: true, color: TEAL })], { alignment: AlignmentType.CENTER, after: 25, line: 270, keepNext: true }));
+    const contactRuns = [];
+    if (location) contactRuns.push(run(location, { size: 18, color: MUTED }));
+    if (email) {
+      if (contactRuns.length) contactRuns.push(run("  |  ", { size: 18, color: MUTED }));
+      contactRuns.push(new ExternalHyperlink({ link: `mailto:${email}`, children: [run(email, { size: 18, color: TEAL })] }));
+    }
+    if (phone) {
+      if (contactRuns.length) contactRuns.push(run("  |  ", { size: 18, color: MUTED }));
+      contactRuns.push(run(phone, { size: 18, color: MUTED }));
+    }
+    children.push(paragraph(contactRuns, { alignment: AlignmentType.CENTER, after: 90, line: 230 }));
+
+    children.push(new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      layout: TableLayoutType.FIXED,
+      borders: {
+        top: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+        bottom: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+        left: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+        right: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+        insideHorizontal: NONE_BORDER,
+        insideVertical: NONE_BORDER
+      },
+      rows: [new TableRow({
+        cantSplit: true,
+        children: [new TableCell({
+          shading: { fill: LIGHT_TEAL, type: ShadingType.CLEAR, color: "auto" },
+          borders: {
+            top: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+            bottom: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+            left: { style: BorderStyle.SINGLE, size: 8, color: TEAL },
+            right: { style: BorderStyle.SINGLE, size: 8, color: TEAL }
+          },
+          margins: { top: 40, bottom: 40, left: 90, right: 90 },
+          children: [paragraph(
+            [run("Prepared for: Saudi Board of Prosthodontics Promotion Examination application through Mumaris+ / SCFHS", { size: 18.8, bold: true, color: NAVY })],
+            { alignment: AlignmentType.CENTER, after: 0, line: 220 }
+          )]
+        })]
+      })]
+    }));
+
+    children.push(sectionHeading("Professional Profile"));
+    let summary = profileValue("Professional summary");
+    if (!summary) {
+      summary = `Assistant Professor of Prosthodontics at Riyadh Elm University with a Bachelor of Dental Surgery awarded with first-degree honours and a GPA of ${bds?.GPA || "4.88"}/${bds?.["GPA Scale"] || "5"}, followed by a Master of Science in Dentistry and Clinical Specialty in Prosthodontics. Academic experience includes undergraduate dental education, quality assurance leadership, research, evidence synthesis, community oral-health initiatives, and professional development in fixed, removable, implant, esthetic, and digital prosthodontics. The research record includes ${countWord(publicationCount)} peer-reviewed publications and a United Kingdom registered design relating to an AI-powered salivary biosensor medical device.`;
+    }
+    children.push(paragraph([run(summary, { size: 18.7 })], { alignment: AlignmentType.JUSTIFIED, after: 60, line: 245, keepLines: true }));
+
+    children.push(subheading("Key Academic and Professional Highlights"));
+    const highlights = [
+      currentRole ? `Current appointment: ${currentRole["Job Title"]}, ${currentRole.Organisation} (since ${academicDate(currentRole["Start ISO"])}).` : "",
+      bds ? `${bds.Abbreviation || "BDS"} with ${clean(bds.Honours).toLowerCase()} and GPA ${bds.GPA}/${bds["GPA Scale"]}.` : "",
+      masters ? `${masters.Abbreviation || "MSc"} in Dentistry and Clinical Specialty in Prosthodontics.` : "",
+      `${publicationCount} peer-reviewed publications, including first-author research in prosthodontics and dental materials.`,
+      "Chair, Quality Assurance Committee, Prosthodontics Department, College of Dentistry.",
+      "Member, Riyadh Elm University Research Center and Academic Advisory Committee.",
+      "Professional memberships in the Saudi Dental Society and Saudi Prosthodontic Society."
+    ].filter(Boolean);
+    highlights.forEach(item => children.push(bullet(item)));
+
+    children.push(subheading("Areas of Academic and Clinical Interest"));
+    let areas = uniqueValues([
+      ...splitList(profileValue("Research interests")),
+      ...splitList(profileValue("Teaching areas")),
+      ...splitList(profileValue("Clinical expertise"))
+    ]);
+    if (!areas.length) areas = [
+      "Fixed and removable prosthodontics",
+      "Digital dentistry, CAD-CAM, and 3D printing",
+      "Dental ceramics and restorative materials",
+      "Implant prosthodontics",
+      "Phonetics and prosthesis design",
+      "Evidence synthesis and clinical research",
+      "Dental education and quality assurance"
+    ];
+    const areaRuns = [];
+    areas.forEach((area, index) => {
+      if (index) areaRuns.push(run("  |  ", { size: 17.6, color: MID_GRAY }));
+      areaRuns.push(run(area, { size: 17.6 }));
+    });
+    children.push(paragraph(areaRuns, { after: 45, line: 225 }));
+
+    children.push(sectionHeading("Academic Qualifications and Specialty Training"));
+    displayOrder(academicItems("education")).forEach(education => {
+      const dateText = education["Education ID"] === "EDU003"
+        ? academicDate(education["Start ISO"], education["From (raw)"])
+        : academicRange(education["Start ISO"], education["End ISO"], false, education["From (raw)"], education["To (raw)"]);
+      let title = clean(education.Qualification);
+      if (education.Abbreviation) title += ` (${education.Abbreviation})`;
+      const details = [];
+      if (education["Field / Specialty"]) details.push(`Field / Specialty: ${education["Field / Specialty"]}`);
+      if (education.Honours) details.push(clean(education.Honours));
+      if (education.GPA !== "" && education.GPA != null) details.push(`GPA: ${education.GPA} / ${education["GPA Scale"]}`);
+      if (education["Education ID"] === "EDU003") details.push("Advanced-level professional certificate in online teaching and training");
+      children.push(twoColEntry(dateText, title, `${education.Institution}${education.Location ? `, ${education.Location}` : ""}`, details, true));
+    });
+
+    children.push(sectionHeading("Academic and Professional Appointments"));
+    displayOrder(academicItems("employment")).forEach(employment => {
+      const dateText = academicRange(employment["Start ISO"], employment["End ISO"], isYes(employment.Current), employment["From (raw)"], employment["To (raw)"]);
+      children.push(twoColEntry(dateText, clean(employment["Job Title"]), `${employment.Organisation}, ${employment.Location}`, [], isYes(employment.Current)));
+    });
+
+    children.push(sectionHeading("Peer-Reviewed Publications"));
+    children.push(paragraph([run(`Total publications listed: ${publicationCount}`, { size: 17.2, italics: true, color: MUTED })], { after: 35, line: 220 }));
+    [...publications].sort((a, b) => Number(b.Year || 0) - Number(a.Year || 0) || Number(a["Display Order"] || 9999) - Number(b["Display Order"] || 9999))
+      .forEach((pub, index) => children.push(publication(index + 1, pub)));
+
+    children.push(sectionHeading("Intellectual Property"));
+    displayOrder(academicItems("intellectual_property")).forEach(item => {
+      const dateText = `Registered ${academicDate(item["Registration Date ISO"], item["Registration Date (raw)"])}`;
+      const details = [
+        `Grant date: ${academicDate(item["Grant Date ISO"], item["Grant Date (raw)"])}`,
+        clean(item.Class),
+        clean(item.Subclass)
+      ];
+      children.push(twoColEntry(dateText, clean(item.Title), `Registered Design, ${item.Jurisdiction} | Design No. ${item["Design / Registration Number"]}`, details, true));
+    });
+
+    children.push(sectionHeading("Academic Leadership and Institutional Service"));
+    displayOrder(academicItems("committees")).forEach(item => {
+      const dateText = academicRange(item["Start ISO"], item["End ISO"], isYes(item.Current), item["From (raw)"], item["To (raw)"]) || "Date not stated";
+      const organisation = `${clean(item.Organisation)}${item["College / Department"] ? ` | ${item["College / Department"]}` : ""}`;
+      children.push(twoColEntry(dateText, `${item.Role}, ${item["Committee / Body"]}`, organisation, [], isYes(item.Current)));
+    });
+
+    children.push(sectionHeading("Professional Memberships"));
+    displayOrder(academicItems("memberships")).forEach(item => {
+      const dateText = academicRange(item["Start ISO"], item["End ISO"], isYes(item.Current), item["From (raw)"], item["To (raw)"]);
+      children.push(twoColEntry(dateText, `${item.Organisation}${item.Abbreviation ? ` (${item.Abbreviation})` : ""}`, "", [], true));
+    });
+
+    children.push(sectionHeading("Community Engagement"));
+    [...academicItems("community_projects")].sort((a, b) => clean(b["Date ISO"]).localeCompare(clean(a["Date ISO"]))).forEach(item => {
+      children.push(twoColEntry(
+        academicDate(item["Date ISO"], item["Date (raw)"]),
+        clean(item["Project Title (clean)"]) || clean(item["Project Title (raw)"]),
+        "",
+        [`Project No. ${item["Project Number"]} | KSCCH Serial No. ${item["KSCCH Serial No."]}`, `${item.Semester}, Academic Year ${item["Academic Year"]}`]
+      ));
+    });
+
+    children.push(sectionHeading("Selected Academic Recognition and Professional Activities"));
+    const selectedIds = new Set(["PD010", "PD038", "PD039", "PD042", "PD043", "PD044", "PD045"]);
+    academicItems("professional_development")
+      .filter(item => selectedIds.has(item["Development ID"]))
+      .sort((a, b) => clean(b["Start ISO"]).localeCompare(clean(a["Start ISO"])) || Number(b["Display Order"] || 0) - Number(a["Display Order"] || 0))
+      .forEach(item => {
+        const dateText = academicRange(item["Start ISO"], item["End ISO"], false, item["Date (raw)"], "") || "Date not stated";
+        const title = clean(item["Activity / Event (clean)"]) || clean(item["Activity / Event (raw)"]);
+        const organisation = [item.Role, item["Location / Provider"]].map(clean).filter(Boolean).join(" | ");
+        const details = [];
+        if (item["Instructor(s) / Speaker(s)"]) details.push(`Instructor(s) / Speaker(s): ${item["Instructor(s) / Speaker(s)"]}`);
+        if (item["Delivery Mode"]) details.push(`Delivery mode: ${item["Delivery Mode"]}`);
+        children.push(twoColEntry(dateText, title, organisation, details));
+      });
+
+    children.push(sectionHeading("Appendix A - Complete Professional Development Record"));
+    children.push(paragraph(
+      [run("The following record is presented in reverse chronological order and reflects the complete professional-development dataset supplied for this CV.", { size: 17, italics: true, color: MUTED })],
+      { after: 45, line: 220 }
+    ));
+    const development = [...academicItems("professional_development")].sort((a, b) => clean(b["Start ISO"]).localeCompare(clean(a["Start ISO"])) || Number(b["Display Order"] || 0) - Number(a["Display Order"] || 0));
+    let currentYear = null;
+    development.forEach(item => {
+      const yearLabel = item.Year == null || item.Year === "" ? "Date not specified" : String(item.Year);
+      if (yearLabel !== currentYear) {
+        currentYear = yearLabel;
+        children.push(paragraph([run(yearLabel, { size: 19.4, bold: true, color: TEAL })], { before: 70, after: 20, line: 220, keepNext: true }));
+      }
+      const fallbackRaw = item.Year == null || item.Year === "" ? "" : item["Date (raw)"];
+      const dateText = academicRange(item["Start ISO"], item["End ISO"], false, fallbackRaw, "");
+      const title = clean(item["Activity / Event (clean)"]) || clean(item["Activity / Event (raw)"]);
+      const meta = [];
+      if (dateText) meta.push(dateText);
+      if (item["Activity Type"]) meta.push(clean(item["Activity Type"]));
+      if (item.Role && item.Role !== "Participant") meta.push(clean(item.Role));
+      if (item["Location / Provider"]) meta.push(clean(item["Location / Provider"]));
+      if (item["Instructor(s) / Speaker(s)"]) meta.push(clean(item["Instructor(s) / Speaker(s)"]));
+      const runs = [run("• ", { size: 16.7, bold: true, color: TEAL }), run(title, { size: 16.7, bold: true })];
+      if (meta.length) runs.push(run(` - ${meta.join(" | ")}`, { size: 16.3, color: MUTED }));
+      children.push(paragraph(runs, { after: 18, line: 215, keepLines: true, indent: { left: 300, hanging: 220 } }));
+    });
+
+    children.push(sectionHeading("References and Document Status"));
+    children.push(paragraph([run("References are available upon request.", { size: 18.2 })], { after: 25, line: 225 }));
+    if (lastUpdated) children.push(paragraph([run(`CV dataset last updated: ${lastUpdated}.`, { size: 16.8, italics: true, color: MUTED })], { after: 0, line: 215 }));
+
+    return new Document({
+      creator: name,
+      title: `Academic Curriculum Vitae - ${name}`,
+      subject: "Saudi Board of Prosthodontics Promotion Examination application through Mumaris+ / SCFHS",
+      description: "Academic CV generated from SaraExportedDataCV.json.",
+      keywords: "Academic CV, Prosthodontics, SCFHS, Mumaris+, Saudi Board",
+      styles: {
+        default: {
+          document: {
+            run: { font: FONT, size: 18.4, color: DARK },
+            paragraph: { spacing: { line: 254, after: 40 } }
+          }
+        }
+      },
+      sections: [{
+        properties: {
+          page: {
+            size: { width: 11906, height: 16838 },
+            margin: { top: 822, right: 936, bottom: 765, left: 936, header: 312, footer: 312 }
+          }
+        },
+        headers: { default: header },
+        footers: { default: footer },
+        children
+      }]
+    });
+  }
+
+  async function downloadAcademicDocx() {
+    const controls = [...document.querySelectorAll('#academic-docx-button, [data-action="academic-docx"]')];
+    controls.forEach(button => button.disabled = true);
+    showToast("Building professionally formatted academic CV…");
+    try {
+      const documentFile = buildAcademicDocx(activeData);
+      const blob = await window.docx.Packer.toBlob(documentFile);
+      const nameRow = (activeData.profile || []).find(item => item.Label === "Full name" && String(item["Include Academic CV"] || "").toLowerCase() === "yes");
+      const safeName = String(nameRow?.["Value (clean/display)"] || nameRow?.["Value (raw)"] || "CV").replace(/[^\w.-]+/g, "_");
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${safeName}_SCFHS_Prosthodontics_Academic_CV.docx`;
+      document.body.appendChild(link);
+      link.click();
+      const objectUrl = link.href;
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+      showToast("Academic CV DOCX downloaded.");
+    } catch (error) {
+      console.error(error);
+      showToast(`Could not create academic CV: ${error.message}`);
+    } finally {
+      controls.forEach(button => button.disabled = false);
+    }
+  }
+
   async function downloadATSDocx() {
     const controls = [...document.querySelectorAll('#docx-button, [data-action="docx"]')];
     controls.forEach(button => button.disabled = true);
@@ -913,6 +1357,8 @@ function(r){"object"==typeof e&&void 0!==t?t.exports=r():"function"==typeof defi
     document.querySelectorAll('[data-action="load-json"]').forEach(button => button.addEventListener("click", () => fileInput.click()));
     document.getElementById("docx-button")?.addEventListener("click", downloadATSDocx);
     document.querySelectorAll('[data-action="docx"]').forEach(button => button.addEventListener("click", downloadATSDocx));
+    document.getElementById("academic-docx-button")?.addEventListener("click", downloadAcademicDocx);
+    document.querySelectorAll('[data-action="academic-docx"]').forEach(button => button.addEventListener("click", downloadAcademicDocx));
     document.getElementById("current-year").textContent = new Date().getFullYear();
   }
 
